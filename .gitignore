@@ -1,0 +1,5 @@
+venv
+app_management_system/applications/migrations/*
+app_management_system/core/migrations/*
+app_management_system/notification/migrations/*
+app_management_system/reviewer/migrations/*
