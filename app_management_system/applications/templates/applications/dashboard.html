@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<h1>Dashboard</h1>
+
+{% if user.is_authenticated %}
+    <p>Welcome, {{ user.username }}!</p>
+
+    {% comment %} <div class="dashboard-content">
+        {% if user.is_superuser %}
+            <h2>Super Admin Dashboard</h2>
+            <ul>
+                <li><a href="{% url 'manage_users' %}">Manage Users</a></li>
+                <li><a href="{% url 'manage_applications' %}">Manage Applications</a></li>
+                <li><a href="{% url 'manage_reviews' %}">Manage Reviews</a></li>
+            </ul>
+        {% elif user.is_staff %}
+            <h2>Admin Dashboard</h2>
+            <ul>
+                <li><a href="{% url 'manage_applications' %}">Manage Applications</a></li>
+                <li><a href="{% url 'manage_reviews' %}">Manage Reviews</a></li>
+            </ul>
+        {% elif user.has_perm('applications.can_submit') %}
+            <h2>User Dashboard</h2>
+            <ul>
+                <li><a href="{% url 'submit_application' %}">Submit Application</a></li>
+                <li><a href="{% url 'view_applications' %}">View My Applications</a></li>
+            </ul>
+        {% elif user.has_perm('reviewer.can_review') %}
+            <h2>Reviewer Dashboard</h2>
+            <ul>
+                <li><a href="{% url 'view_reviews' %}">View Reviews</a></li>
+            </ul>
+        {% else %}
+            <p>You do not have permissions to view any specific dashboard.</p>
+        {% endif %}
+    </div> {% endcomment %}
+{% else %}
+    <p>You need to <a href="{% url 'login' %}">login</a> to access the dashboard.</p>
+{% endif %}
+{% endblock %}
