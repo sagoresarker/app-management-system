@@ -1,12 +1,12 @@
 from django.contrib import admin
-from .models import Application, Review
+from .models import Application, ChecklistItem
 
 @admin.register(Application)
 class ApplicationAdmin(admin.ModelAdmin):
-    list_display = ('title', 'user', 'status', 'submission_date')
-    search_fields = ('title', 'user__username', 'status')
+    list_display = ('user', 'text_field_1', 'dropdown_field_1', 'image', 'file')  # Adjust according to your model fields
+    search_fields = ('user__username', 'text_field_1', 'dropdown_field_1')  # Adjust according to your model fields
 
-@admin.register(Review)
-class ReviewAdmin(admin.ModelAdmin):
-    list_display = ('application', 'reviewer', 'review_date')
-    search_fields = ('application__title', 'reviewer__username')
+@admin.register(ChecklistItem)
+class ChecklistItemAdmin(admin.ModelAdmin):
+    list_display = ('name',)
+    search_fields = ('name',)

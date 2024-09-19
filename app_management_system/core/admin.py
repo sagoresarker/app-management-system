@@ -9,3 +9,10 @@ class CustomUserAdmin(UserAdmin):
     list_display = ['username', 'email', 'role', 'is_active']
 
 admin.site.register(CustomUser, CustomUserAdmin)
+
+
+
+# Change the site header and title
+admin.site.site_header = "Application Management System"
+admin.site.site_title = "Application Management System"
+admin.site.index_title = "Welcome to Application Management"

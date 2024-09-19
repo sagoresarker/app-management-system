@@ -1,8 +1,27 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from .models import Application, Review
-from .forms import ApplicationForm, ReviewForm
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from .forms import ApplicationForm
+from .models import Application
+
+
+@login_required
+def submit_application(request):
+    if request.method == 'POST':
+        form = ApplicationForm(request.POST, request.FILES)
+        if form.is_valid():
+            application = form.save(commit=False)
+            application.user = request.user
+            application.save()
+            return redirect('application_success')
+    else:
+        form = ApplicationForm()
+    return render(request, 'applications/submit_application.html', {'form': form})
+
+def application_success(request):
+    return render(request, 'applications/application_success.html')
 
 @login_required
 def dashboard(request):
@@ -10,25 +29,6 @@ def dashboard(request):
     applications = Application.objects.filter(user=user)
     return render(request, 'applications/dashboard.html', {'applications': applications})
 
-@login_required
-def submit_application(request):
-    if request.method == 'POST':
-        form = ApplicationForm(request.POST)
-        if form.is_valid():
-            application = form.save(commit=False)
-            application.user = request.user
-            application.save()
-            return redirect('dashboard')
-    else:
-        form = ApplicationForm()
-    return render(request, 'applications/application_form.html', {'form': form})
-
-@login_required
-def admin_application_list(request):
-    if not request.user.is_staff:
-        return redirect('dashboard')
-    applications = Application.objects.all()
-    return render(request, 'applications/application_list.html', {'applications': applications})
 
 @login_required
 def assign_reviewer(request, application_id):
