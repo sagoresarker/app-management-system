@@ -16,7 +16,13 @@
             <div class="card-body">
                 <h5 class="card-title">Submit an Application</h5>
                 <p class="card-text">Quickly submit your application for review.</p>
-                <a href="{% url 'register' %}" class="btn btn-outline-primary">Submit Now</a>
+
+                {% if user.is_authenticated and user.is_user %}
+                <a href="{% url 'submit_application' %}" class="btn btn-outline-primary">Submit Now</a>
+                {% else %}
+                    <a href="{% url 'login' %}" class="btn btn-outline-primary">Submit Now</a>
+                {% endif %}
+
             </div>
         </div>
     </div>

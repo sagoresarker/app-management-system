@@ -1,34 +1,81 @@
 {% extends 'base.html' %}
+{% load widget_tweaks %}
 
 {% block title %}Submit Application{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
+<div class="container-fluid py-5">
     <div class="row justify-content-center">
-        <div class="col-md-8">
-            <h1 class="mb-4">Submit Your Application</h1>
-            <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
-                {% csrf_token %}
-                {% for field in form %}
-                    <div class="mb-3">
-                        <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
-                        {% if field.name == 'checklist' %}
-                            <div class="form-check">
-                                {{ field }}
+        <div class="col-xxl-10 col-xl-11">
+            <div class="card shadow-lg border-0 rounded-lg">
+                <div class="card-header bg-primary text-white text-center py-4">
+                    <h2 class="font-weight-light mb-0">Application Form</h2>
+                </div>
+                <div class="card-body p-5">
+                    <form method="post" enctype="multipart/form-data" novalidate>
+                        {% csrf_token %}
+
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <div class="form-floating mb-3">
+                                    {% render_field form.text_field_1 class="form-control" placeholder="Text Field 1" %}
+                                    <label for="{{ form.text_field_1.id_for_label }}">{{ form.text_field_1.label }}</label>
+                                </div>
                             </div>
-                        {% else %}
-                            {{ field }}
-                        {% endif %}
-                        {% if field.help_text %}
-                            <div class="form-text">{{ field.help_text }}</div>
-                        {% endif %}
-                        {% for error in field.errors %}
-                            <div class="invalid-feedback d-block">{{ error }}</div>
-                        {% endfor %}
-                    </div>
-                {% endfor %}
-                <button type="submit" class="btn btn-primary">Submit</button>
-            </form>
+                            <div class="col-md-6">
+                                <div class="form-floating mb-3">
+                                    {% render_field form.text_field_2 class="form-control" placeholder="Text Field 2" %}
+                                    <label for="{{ form.text_field_2.id_for_label }}">{{ form.text_field_2.label }}</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <div class="form-floating mb-3">
+                                    {% render_field form.dropdown_field_1 class="form-select" %}
+                                    <label for="{{ form.dropdown_field_1.id_for_label }}">{{ form.dropdown_field_1.label }}</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating mb-3">
+                                    {% render_field form.dropdown_field_2 class="form-select" %}
+                                    <label for="{{ form.dropdown_field_2.id_for_label }}">{{ form.dropdown_field_2.label }}</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label">{{ form.image.label }}</label>
+                                {% render_field form.image class="form-control" %}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">{{ form.file.label }}</label>
+                                {% render_field form.file class="form-control" %}
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label d-block">{{ form.checklist.label }}</label>
+                            <div class="checklist-container">
+                                {% for checkbox in form.checklist %}
+                                    <div class="form-check form-check-inline">
+                                        {{ checkbox.tag }}
+                                        <label class="form-check-label" for="{{ checkbox.id_for_label }}">
+                                            {{ checkbox.choice_label }}
+                                        </label>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg">Submit Application</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -36,14 +83,36 @@
 
 {% block extra_css %}
 <style>
-    .form-check {
-        padding-left: 0;
+    body {
+        background-color: #f8f9fa;
     }
-    .form-check-input {
-        margin-right: 5px;
+    .card {
+        border: none;
+        transition: all 0.3s;
+    }
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 1rem 3rem rgba(0,0,0,.175)!important;
+    }
+    .form-floating>.form-control,
+    .form-floating>.form-select {
+        height: calc(3.5rem + 2px);
+        line-height: 1.25;
     }
     .form-check-label {
-        margin-bottom: 5px;
+        cursor: pointer;
+    }
+    .checklist-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: center;
+    }
+    .form-check-inline {
+        margin-right: 0;
+    }
+    .form-check-inline .form-check-input {
+        margin-right: 5px;
     }
 </style>
 {% endblock %}

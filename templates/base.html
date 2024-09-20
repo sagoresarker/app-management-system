@@ -21,11 +21,29 @@
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav ms-auto">
                         <li class="nav-item"><a class="nav-link" href="{% url 'index' %}">Home</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'register' %}">Register</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Login</a></li>
+                        {% if not user.is_authenticated %}
+                            <li class="nav-item"><a class="nav-link" href="{% url 'register' %}">Register</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Login</a></li>
+                        {% endif %}
                         {% if user.is_authenticated %}
                             <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Logout</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{% url 'submit_application' %}">Apply</a></li>
                         {% endif %}
+
+                        {% if user.is_authenticated %}
+                            {% if user.is_user %}
+                                <a href="{% url 'user_dashboard' %}" class="btn btn-outline-primary">Dashboard</a>
+                            {% elif user.is_admin %}
+                                <a href="{% url 'admin_dashboard' %}" class="btn btn-outline-primary">Dashboard</a>
+                            {% elif user.is_reviewer %}
+                                <a href="{% url 'reviewer_dashboard' %}" class="btn btn-outline-primary">Dashboard</a>
+                            {% else %}
+                                <a href="{% url 'login' %}" class="btn btn-outline-primary">Submit Now</a>
+                            {% endif %}
+                        {% else %}
+                            <a href="{% url 'login' %}" class="btn btn-outline-primary">Submit Now</a>
+                        {% endif %}
+
                     </ul>
                 </div>
             </div>
