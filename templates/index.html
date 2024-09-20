@@ -4,6 +4,39 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
-<h1>Welcome to the Application Management System</h1>
-<p>This is a place where users can submit and review applications.</p>
+<div class="text-center">
+    <h1 class="display-4">Welcome to the Application Management System</h1>
+    <p class="lead">Submit, manage, and review applications easily.</p>
+    <a href="{% url 'register' %}" class="btn btn-primary btn-lg mt-3">Get Started</a>
+</div>
+
+<div class="row mt-5">
+    <div class="col-lg-4 col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">Submit an Application</h5>
+                <p class="card-text">Quickly submit your application for review.</p>
+                <a href="{% url 'register' %}" class="btn btn-outline-primary">Submit Now</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4 col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">Manage Applications</h5>
+                <p class="card-text">Keep track of your application status and updates.</p>
+                <a href="#" class="btn btn-outline-secondary">Manage</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4 col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">Review Submissions</h5>
+                <p class="card-text">Review submissions and provide feedback.</p>
+                <a href="#" class="btn btn-outline-success">Review Now</a>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
