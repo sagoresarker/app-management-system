@@ -50,7 +50,6 @@ def register(request):
 def registration_complete(request):
     return render(request, 'core/registration_complete.html')
 
-# User Login View
 def login_view(request):
     if request.method == 'POST':
         form = CustomAuthenticationForm(request, data=request.POST)
@@ -60,7 +59,12 @@ def login_view(request):
             user = authenticate(username=username, password=password)
             if user is not None:
                 login(request, user)
-                return redirect('dashboard')
+                if user.is_staff:
+                    return redirect('admin_dashboard')
+                elif user.groups.filter(name='Reviewers').exists():
+                    return redirect('reviewer_dashboard')
+                else:
+                    return redirect('user_dashboard')
             else:
                 messages.error(request, "Invalid username or password.")
     else:
