@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mb-4">All Applications</h1>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Application ID</th>
+                <th>Submitted By</th>
+                <th>Submission Date</th>
+                <th>Status</th>
+                <th>Reviewer</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for application in applications %}
+            <tr>
+                <td>{{ application.id }}</td>
+                <td>{{ application.user.username }}</td>
+                <td>{{ application.submission_date|date:"F d, Y" }}</td>
+                <td>{{ application.get_status_display }}</td>
+                <td>{{ application.reviewer|default_if_none:"Not assigned" }}</td>
+                <td>
+                    {% if not application.reviewer %}
+                    <form method="post" action="{% url 'assign_reviewer' application.id %}">
+                        {% csrf_token %}
+                        <select name="reviewer" class="form-select form-select-sm">
+                            <option value="">Select Reviewer</option>
+                            {% for reviewer in reviewers %}
+                            <option value="{{ reviewer.id }}">{{ reviewer.username }}</option>
+                            {% endfor %}
+                        </select>
+                        <button type="submit" class="btn btn-primary btn-sm mt-2">Assign Reviewer</button>
+                    </form>
+                    {% else %}
+                    Reviewer Assigned
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" class="text-center">No applications submitted yet.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
