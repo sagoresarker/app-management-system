@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
 
+{% load application_filters %}
+
 {% block title %}Reviewer Dashboard{% endblock %}
 
 {% block content %}
@@ -23,18 +25,7 @@
                 <td>{{ application.submission_date|date:"F d, Y" }}</td>
                 <td>{{ application.get_status_display }}</td>
                 <td>
-                    {% if application.status == 'under_review' %}
-                    <form method="post" action="{% url 'review_application' application.id %}">
-                        {% csrf_token %}
-                        <select name="status" class="form-select form-select-sm">
-                            <option value="approved">Approve</option>
-                            <option value="rejected">Reject</option>
-                        </select>
-                        <button type="submit" class="btn btn-primary btn-sm mt-2">Submit Review</button>
-                    </form>
-                    {% else %}
-                    {{ application.get_status_display }}
-                    {% endif %}
+                    <a href="{% url 'application_detail_reviewer' application.id %}" class="btn btn-primary btn-sm">View Details</a>
                 </td>
             </tr>
             {% empty %}

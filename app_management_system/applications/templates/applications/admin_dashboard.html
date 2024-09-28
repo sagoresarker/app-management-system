@@ -25,19 +25,19 @@
                 <td>{{ application.get_status_display }}</td>
                 <td>{{ application.reviewer|default_if_none:"Not assigned" }}</td>
                 <td>
+                    <a href="{% url 'application_detail_admin' application.id %}" class="btn btn-info btn-sm">View Details</a>
                     {% if not application.reviewer %}
                     <form method="post" action="{% url 'assign_reviewer' application.id %}">
                         {% csrf_token %}
-                        <select name="reviewer" class="form-select form-select-sm">
-                            <option value="">Select Reviewer</option>
+                        <select name="reviewer" class="form-select form-select-sm mt-2">
+                            <option value="">Select Existing Reviewer</option>
                             {% for reviewer in reviewers %}
                             <option value="{{ reviewer.id }}">{{ reviewer.username }}</option>
                             {% endfor %}
                         </select>
+                        <input type="email" name="new_reviewer_email" class="form-control form-control-sm mt-2" placeholder="Or enter new reviewer email">
                         <button type="submit" class="btn btn-primary btn-sm mt-2">Assign Reviewer</button>
                     </form>
-                    {% else %}
-                    Reviewer Assigned
                     {% endif %}
                 </td>
             </tr>
