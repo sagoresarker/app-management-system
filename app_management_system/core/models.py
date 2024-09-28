@@ -1,7 +1,8 @@
-from django.db import models
+# core/models.py
 from django.contrib.auth.models import AbstractUser
-from django.contrib.auth.models import AbstractUser
 from django.db import models
+import random
+import string
 
 class CustomUser(AbstractUser):
     USER_ROLES = (
@@ -12,6 +13,7 @@ class CustomUser(AbstractUser):
     )
 
     role = models.CharField(max_length=20, choices=USER_ROLES, default='user')
+    email = models.EmailField(unique=True)
 
     def is_super_admin(self):
         return self.role == 'super_admin'
@@ -25,3 +27,6 @@ class CustomUser(AbstractUser):
     def is_reviewer(self):
         return self.role == 'reviewer'
 
+    @staticmethod
+    def generate_random_password():
+        return ''.join(random.choices(string.ascii_letters + string.digits, k=12))
