@@ -8,6 +8,7 @@ from .forms import ApplicationForm
 from .models import Application
 from app_management_system.core.models import CustomUser
 import os
+from django.contrib import messages
 
 User = get_user_model()
 
@@ -107,16 +108,18 @@ def send_assignment_email(reviewer, application):
 
 
 @login_required
-@user_passes_test(lambda u: u.is_reviewer())
+@user_passes_test(lambda u: u.is_user())
 def application_detail(request, application_id):
-    application = get_object_or_404(Application, id=application_id, reviewer=request.user)
-    if request.method == 'POST':
-        status = request.POST.get('status')
-        if status in ['approved', 'rejected']:
-            application.status = status
-            application.save()
-            return redirect('reviewer_dashboard')
-    return render(request, 'applications/application_detail.html', {'application': application})
+    application = get_object_or_404(Application, id=application_id, user=request.user)
+
+    # Get all relevant fields except 'id', 'user', 'submission_date', etc.
+    fields_with_values = [
+        {'verbose_name': field.verbose_name, 'value': field.value_from_object(application)}
+        for field in application._meta.fields
+        if field.name not in ['id', 'user', 'submission_date', 'status', 'reviewer']
+    ]
+
+    return render(request, 'applications/application_detail.html', {'application': application, 'fields_with_values': fields_with_values})
 
 
 @login_required
@@ -166,3 +169,23 @@ def application_detail_admin(request, application_id):
         'application': application,
         'fields_with_values': fields_with_values
     })
+
+@login_required
+@user_passes_test(lambda u: u.is_user())
+def edit_application(request, application_id):
+    application = get_object_or_404(Application, id=application_id, user=request.user)
+
+    if application.status != 'pending':
+        messages.error(request, "You can only edit pending applications.")
+        return redirect('user_dashboard')
+
+    if request.method == 'POST':
+        form = ApplicationForm(request.POST, request.FILES, instance=application)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Application updated successfully.")
+            return redirect('user_dashboard')
+    else:
+        form = ApplicationForm(instance=application)
+
+    return render(request, 'applications/edit_application.html', {'form': form, 'application': application})

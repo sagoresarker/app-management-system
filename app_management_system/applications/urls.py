@@ -17,4 +17,6 @@ urlpatterns = [
 
     path('invite-reviewer/<int:application_id>/', views.assign_reviewer, name='invite_reviewer'),
     path('application-detail/<int:application_id>/', views.application_detail, name='application_detail'),
+
+    path('edit-application/<int:application_id>/', views.edit_application, name='edit_application'),
 ]
