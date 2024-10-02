@@ -2,7 +2,50 @@
 
 {% block title %}Application Submitted{% endblock %}
 
+{% block extra_head %}
+<style>
+    .success-container {
+        max-width: 600px;
+        margin: 50px auto;
+        padding: 30px;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .success-icon {
+        color: #28a745;
+        font-size: 48px;
+        margin-bottom: 20px;
+    }
+    .success-title {
+        color: #333;
+        font-size: 24px;
+        margin-bottom: 15px;
+    }
+    .success-message {
+        color: #555;
+        font-size: 16px;
+        margin-bottom: 20px;
+    }
+    .btn-return {
+        background-color: #007bff;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 5px;
+        text-decoration: none;
+        transition: background-color 0.3s;
+    }
+    .btn-return:hover {
+        background-color: #0056b3;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<h1>Application Submitted</h1>
-<p>Your application has been successfully submitted. Thank you!</p>
+<div class="success-container text-center">
+    <i class="fas fa-check-circle success-icon"></i>
+    <h1 class="success-title">Application Submitted</h1>
+    <p class="success-message">Your application has been successfully submitted. Thank you for your interest!</p>
+    <a href="{% url 'user_dashboard' %}" class="btn-return">Return to Home</a>
+</div>
 {% endblock %}
