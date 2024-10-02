@@ -2,16 +2,44 @@
 
 {% block title %}Registration Complete{% endblock %}
 
+{% block extra_head %}
+<style>
+    .registration-container {
+        max-width: 600px;
+        margin: 50px auto;
+        padding: 30px;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .registration-title {
+        color: #333;
+        font-size: 24px;
+        margin-bottom: 15px;
+    }
+    .registration-message {
+        color: #555;
+        font-size: 16px;
+        margin-bottom: 20px;
+    }
+    .btn-login {
+        background-color: #007bff;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 5px;
+        text-decoration: none;
+        transition: background-color 0.3s;
+    }
+    .btn-login:hover {
+        background-color: #0056b3;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-lg-6 col-md-8 col-sm-10">
-            <div class="card shadow-lg p-4 text-center">
-                <h1 class="mb-4">Registration Complete</h1>
-                <p class="lead">Thank you for registering. Please check your email to activate your account.</p>
-                <a href="{% url 'login' %}" class="btn btn-primary btn-lg mt-3">Go to Login</a>
-            </div>
-        </div>
-    </div>
+<div class="registration-container text-center">
+    <h1 class="registration-title">Registration Complete</h1>
+    <p class="registration-message">Thank you for registering. Please check your email to activate your account.</p>
+    <a href="{% url 'login' %}" class="btn-login">Go to Login</a>
 </div>
 {% endblock %}

@@ -1,16 +1,10 @@
 from django import forms
-from .models import Application, ChecklistItem
+from .models import Application
 
 class ApplicationForm(forms.ModelForm):
-    checklist = forms.ModelMultipleChoiceField(
-        queryset=ChecklistItem.objects.all(),
-        widget=forms.CheckboxSelectMultiple,
-        required=False
-    )
-
     class Meta:
         model = Application
-        fields = ['text_field_1', 'text_field_2', 'dropdown_field_1', 'dropdown_field_2', 'image', 'file', 'checklist']
+        fields = ['text_field_1', 'text_field_2', 'dropdown_field_1', 'dropdown_field_2', 'image', 'file']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

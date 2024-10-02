@@ -12,5 +12,15 @@ push:
 clean:
 	@ docker rmi $(IMAGE_NAME):$(TAG)
 
-run:
+docker_run:
 	@ docker run -it --rm -p 8000:8000 $(IMAGE_NAME):$(TAG)
+
+run:
+	@ python3 manage.py runserver
+
+migrate:
+	@ python3 manage.py makemigrations && python3 manage.py migrate
+
+superuser:
+	@ python3 manage.py createsuperuser
+

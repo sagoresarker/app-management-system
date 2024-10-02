@@ -2,51 +2,157 @@
 
 {% block title %}Admin Dashboard{% endblock %}
 
+{% block extra_css %}
+<style>
+    body {
+        background-color: #f8f9fa;
+    }
+    .card {
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        border: none;
+        margin-bottom: 2rem;
+    }
+    .card-header {
+        background-color: #007bff;
+        color: white;
+        border-bottom: none;
+    }
+    .table {
+        background-color: white;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+    .table th {
+        background-color: #f1f3f5;
+    }
+    .table-striped tbody tr:nth-of-type(odd) {
+        background-color: rgba(0, 123, 255, 0.05);
+    }
+    .status-badge {
+        padding: 0.5em 0.75em;
+        border-radius: 0.25rem;
+        font-weight: bold;
+    }
+    .welcome-header {
+        font-size: 2rem;
+        border-bottom: 2px solid #007bff;
+        padding-bottom: 10px;
+        margin-bottom: 1.5rem;
+    }
+    .btn-group-vertical {
+        width: 100%;
+    }
+    .btn-group-vertical .btn {
+        margin-bottom: 0.5rem;
+    }
+    .admin-header {
+        font-size: 2.5rem;
+        font-weight: bold;
+        border-bottom: 2px solid #007bff;
+        padding-bottom: 10px;
+        margin-bottom: 1.5rem;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="container mt-5">
-    <h1 class="mb-4">All Applications</h1>
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Application ID</th>
-                <th>Submitted By</th>
-                <th>Submission Date</th>
-                <th>Status</th>
-                <th>Reviewer</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for application in applications %}
-            <tr>
-                <td>{{ application.id }}</td>
-                <td>{{ application.user.username }}</td>
-                <td>{{ application.submission_date|date:"F d, Y" }}</td>
-                <td>{{ application.get_status_display }}</td>
-                <td>{{ application.reviewer|default_if_none:"Not assigned" }}</td>
-                <td>
-                    {% if not application.reviewer %}
-                    <form method="post" action="{% url 'assign_reviewer' application.id %}">
-                        {% csrf_token %}
-                        <select name="reviewer" class="form-select form-select-sm">
-                            <option value="">Select Reviewer</option>
-                            {% for reviewer in reviewers %}
-                            <option value="{{ reviewer.id }}">{{ reviewer.username }}</option>
-                            {% endfor %}
-                        </select>
-                        <button type="submit" class="btn btn-primary btn-sm mt-2">Assign Reviewer</button>
-                    </form>
-                    {% else %}
-                    Reviewer Assigned
-                    {% endif %}
-                </td>
-            </tr>
-            {% empty %}
-            <tr>
-                <td colspan="6" class="text-center">No applications submitted yet.</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <h1 class="mb-4 text-center text-primary admin-header">Admin Dashboard</h1>
+    <h2 class="mb-4 text-primary welcome-header">Welcome, <span class="text-success">{{ user.username }}</span>!</h2>
+
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title mb-0">All Applications</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Application ID</th>
+                            <th>Submitted By</th>
+                            <th>Submission Date</th>
+                            <th>Status</th>
+                            <th>Reviewer</th>
+                            <th>View</th>
+                            <th>Reassign Reviewer</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for application in applications %}
+                        <tr>
+                            <td>{{ application.id }}</td>
+                            <td>{{ application.user.username }}</td>
+                            <td>{{ application.submission_date|date:"F d, Y" }}</td>
+                            <td>
+                                <span class="status-badge" style="
+                                    {% if application.status == 'approved' %}
+                                        background-color: #28a745; color: white;
+                                    {% elif application.status == 'rejected' %}
+                                        background-color: #dc3545; color: white;
+                                    {% elif application.status == 'under_review' %}
+                                        background-color: #ffc107; color: #212529;
+                                    {% else %}
+                                        background-color: #17a2b8; color: white;
+                                    {% endif %}
+                                ">
+                                    {{ application.get_status_display }}
+                                </span>
+                            </td>
+                            <td>{{ application.reviewer|default_if_none:"Not assigned" }}</td>
+                            <td>
+                                <a href="{% url 'application_detail_admin' application.id %}" class="btn btn-info btn-sm">View Details</a>
+                            </td>
+                            <td>
+                                <button type="button" class="btn {% if application.reviewer %}btn-primary{% else %}btn-success{% endif %} btn-sm" data-bs-toggle="modal" data-bs-target="#assignModal{{ application.id }}">
+                                    {% if application.reviewer %}Reassign{% else %}Assign{% endif %} Reviewer
+                                </button>
+
+                                <!-- Modal for Assigning/Reassigning Reviewer -->
+                                <div class="modal fade" id="assignModal{{ application.id }}" tabindex="-1" aria-labelledby="assignModalLabel{{ application.id }}" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="assignModalLabel{{ application.id }}">
+                                                    {% if application.reviewer %}Reassign{% else %}Assign{% endif %} Reviewer
+                                                </h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <form method="post" action="{% url 'assign_reviewer' application.id %}">
+                                                    {% csrf_token %}
+                                                    <div class="mb-3">
+                                                        <label for="reviewer{{ application.id }}" class="form-label">Select Existing Reviewer:</label>
+                                                        <select name="reviewer" id="reviewer{{ application.id }}" class="form-select">
+                                                            <option value="">Select Existing Reviewer</option>
+                                                            {% for reviewer in reviewers %}
+                                                            <option value="{{ reviewer.id }}">{{ reviewer.username }}</option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="newReviewer{{ application.id }}" class="form-label">Or Enter New Reviewer Email:</label>
+                                                        <input type="email" name="new_reviewer_email" id="newReviewer{{ application.id }}" class="form-control" placeholder="Enter new reviewer email">
+                                                    </div>
+                                                    <button type="submit" class="btn btn-primary">
+                                                        {% if application.reviewer %}Reassign{% else %}Assign{% endif %} Reviewer
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7" class="text-center">No applications submitted yet.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}

@@ -17,15 +17,8 @@ class Application(models.Model):
     dropdown_field_2 = models.CharField(max_length=100, choices=[('OptionA', 'Option A'), ('OptionB', 'Option B')])
     image = models.ImageField(upload_to='images/')
     file = models.FileField(upload_to='files/')
-    checklist = models.ManyToManyField('ChecklistItem')
     submission_date = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
 
     def __str__(self):
         return f"Application by {self.user.username} - {self.id}"
-
-class ChecklistItem(models.Model):
-    name = models.CharField(max_length=100)
-
-    def __str__(self):
-        return self.name
