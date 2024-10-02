@@ -1,6 +1,7 @@
 from dotenv import load_dotenv
 from pathlib import Path
 import os
+import dj_database_url
 
 load_dotenv()
 
@@ -71,15 +72,21 @@ WSGI_APPLICATION = 'app_management_system.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'ams_db',
+#         'USER': 'postgres',
+#         'PASSWORD': 'sagore',
+#         'HOST': 'localhost',
+#         'PORT': '5433',
+#     }
+# }
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'ams_db',
-        'USER': 'postgres',
-        'PASSWORD': 'sagore',
-        'HOST': 'localhost',
-        'PORT': '5432',
-    }
+    'default': dj_database_url.config(
+        default=os.environ.get('DATABASE_URL', 'postgres://postgres:sagore@localhost:5433/ams_db')
+    )
 }
 
 # Use session-based authentication

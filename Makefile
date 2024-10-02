@@ -23,3 +23,4 @@ migrate:
 
 superuser:
 	@ python3 manage.py createsuperuser
+
