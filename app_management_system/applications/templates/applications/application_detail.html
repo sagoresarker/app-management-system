@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+{% load application_filters %}
+
+{% block title %}Application Details{% endblock %}
+
+{% block extra_css %}
+<style>
+    body {
+        background-color: #f8f9fa;
+    }
+    .card {
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        border: none;
+        margin-bottom: 2rem;
+    }
+    .card-header {
+        background-color: #007bff;
+        color: white;
+        border-bottom: none;
+    }
+    .table {
+        background-color: white;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+    .table th {
+        background-color: #f1f3f5;
+    }
+    .table-striped tbody tr:nth-of-type(odd) {
+        background-color: rgba(0, 123, 255, 0.05);
+    }
+    .status-badge {
+        padding: 0.5em 0.75em;
+        border-radius: 0.25rem;
+        font-weight: bold;
+    }
+    .attachment-link {
+        color: #007bff;
+        text-decoration: none;
+    }
+    .attachment-link:hover {
+        text-decoration: underline;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mb-4 text-center">Application Details</h1>
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title mb-0">Application ID: {{ application.id }}</h5>
+        </div>
+        <div class="card-body">
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <p><strong>Submitted By:</strong> {{ application.user.username }}</p>
+                    <p><strong>Submission Date:</strong> {{ application.submission_date|date:"F d, Y" }}</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Status:</strong>
+                        <span class="status-badge" style="
+                            {% if application.status == 'approved' %}
+                                background-color: #28a745; color: white;
+                            {% elif application.status == 'rejected' %}
+                                background-color: #dc3545; color: white;
+                            {% elif application.status == 'under_review' %}
+                                background-color: #ffc107; color: #212529;
+                            {% else %}
+                                background-color: #17a2b8; color: white;
+                            {% endif %}
+                        ">
+                            {{ application.get_status_display }}
+                        </span>
+                    </p>
+                    <p><strong>Reviewer:</strong> {{ application.reviewer|default_if_none:"Not assigned" }}</p>
+                </div>
+            </div>
+
+            <h6 class="mb-3">Application Details:</h6>
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped">
+                    <tbody>
+                        {% for field in fields_with_values %}
+                            <tr>
+                                <th scope="row" class="w-25">{{ field.verbose_name }}</th>
+                                <td>{{ field.value }}</td>
+                            </tr>
+                        {% endfor %}
+                        <tr>
+                            <th scope="row">Image</th>
+                            <td>
+                                {% if application.image %}
+                                    <a href="{{ application.image.url }}" class="attachment-link">{{ application.image.name }}</a>
+                                {% else %}
+                                    No image uploaded.
+                                {% endif %}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row">File</th>
+                            <td>
+                                {% if application.file %}
+                                    <a href="{{ application.file.url }}" class="attachment-link">{{ application.file.name }}</a>
+                                {% else %}
+                                    No file uploaded.
+                                {% endif %}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

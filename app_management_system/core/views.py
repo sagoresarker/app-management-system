@@ -16,7 +16,7 @@ from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.tokens import default_token_generator
 from django.http import HttpResponse
 from django.utils.http import urlsafe_base64_decode
-
+from django.urls import reverse
 
 def index(request):
     return render(request, 'index.html')
@@ -50,7 +50,6 @@ def register(request):
 def registration_complete(request):
     return render(request, 'core/registration_complete.html')
 
-# User Login View
 def login_view(request):
     if request.method == 'POST':
         form = CustomAuthenticationForm(request, data=request.POST)
@@ -60,12 +59,35 @@ def login_view(request):
             user = authenticate(username=username, password=password)
             if user is not None:
                 login(request, user)
-                return redirect('dashboard')
+                if user.is_super_admin() or user.is_admin():
+                    return redirect(reverse('admin_dashboard'))
+                elif user.is_reviewer():
+                    return redirect(reverse('reviewer_dashboard'))
+                else:
+                    return redirect(reverse('user_dashboard'))
             else:
                 messages.error(request, "Invalid username or password.")
     else:
         form = CustomAuthenticationForm()
     return render(request, 'core/login.html', {'form': form})
+
+# def login_view(request):
+#     if request.method == 'POST':
+#         username = request.POST['username']
+#         password = request.POST['password']
+#         user = authenticate(request, username=username, password=password)
+#         if user is not None:
+#             login(request, user)
+#             if user.is_super_admin() or user.is_admin():
+#                 return redirect(reverse('admin_dashboard'))
+#             elif user.is_reviewer():
+#                 return redirect(reverse('reviewer_dashboard'))
+#             else:
+#                 return redirect(reverse('user_dashboard'))
+#         else:
+#             # Handle invalid login
+#             return render(request, 'core/login.html', {'error': 'Invalid username or password'})
+#     return render(request, 'core/login.html')
 
 # User Logout View
 @login_required
